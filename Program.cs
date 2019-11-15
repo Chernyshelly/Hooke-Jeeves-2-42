@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Hooke_Jeeves
 {
@@ -6,55 +6,72 @@ namespace Hooke_Jeeves
     {
         static double Sq(double x)
         {
-            return (4+3*x);
+            return (Math.Cos(x));
         }
-        delegate double Func(double x);
-        static double User(double leftX, double rightX, double startStep, double endStep, Func func)
+        static double Xy(double[] coords)
+        {
+            if((1 - Math.Pow(coords[0], 2) - Math.Pow(coords[1], 2))<0)
+            {
+                return 999999;
+            }
+            return (Math.Sqrt(1 - Math.Pow(coords[0], 2) - Math.Pow(coords[1], 2)));
+        }
+        delegate double Func(double[] coords);
+        static double[] HookJeeves(double leftX, double rightX, double startStep, double endStep, Func func, int count)
         {
             double step = startStep;
-            double x = 0;
-            double lastResult = func(x);
-            while(Math.Abs(step) > endStep)
+            double[] coords = new double[count];
+            for (int i = 0; i < count; i++)
             {
-                x += step;
-                Console.WriteLine($"x={x} step={step} lr={lastResult} func={func(x)}");
-                if(x >= rightX)
+                coords[i] = 0;
+            }
+            for (int i = 0; i < count; i++)
+            {
+                double lastResult = func(coords);
+                step = startStep;
+                while (Math.Abs(step) > endStep)
                 {
-                    x -= step;
-                    step = -step;
-                }
-                else
-                {
-                    if(x > leftX)
+                    coords[i] += step;
+                    Console.WriteLine($"coords[{i}]={coords[i]} step={step} lr={lastResult} func={func(coords)}");
+                    if (coords[i] >= rightX)
                     {
-                        if (func(x) > lastResult)
+                        coords[i] -= step;
+                        step = -step;
+                    }
+                    else
+                    {
+                        if (coords[i] > leftX)
                         {
-                            x -= step;
-                            step = -step;
-                            if (step > 0)
+                            if (func(coords) > lastResult)
                             {
-                                step = step / 2;
+                                coords[i] -= step;
+                                step = -step;
+                                if (step > 0)
+                                {
+                                    step = step / 2;
+                                }
+                            }
+                            else
+                            {
+                                if(func(coords)!=Math.Sqrt(-1))
+                                lastResult = func(coords);
                             }
                         }
                         else
                         {
-                            lastResult = func(x);
+                            step = endStep;
                         }
-                    }
-                    else
-                    {
-                        break;
                     }
                 }
             }
-
-            return x;
+            return coords;
         }
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
             //Func func = Sq;
-            Console.WriteLine(User(-100, 100, 10, 0.01, Sq));
+            double[] oout = HookJeeves(-100, 100, 10, 0.01, Xy, 2);
+            Console.WriteLine($"x={oout[0]} y={oout[1]} f={Xy(oout)}");
         }
     }
 }
