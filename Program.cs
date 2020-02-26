@@ -4,9 +4,27 @@ namespace Hooke_Jeeves
 {
     class Program
     {
+        static bool IsLesser(double[] a, double[] b)
+        {
+            for (int i = 0; i < a.Length; i++)
+            {
+                if(b[i] <= a[i])
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
         static double Sq(double x)
         {
             return (Math.Cos(x));
+        }
+        static double Tryy(double[] coords)
+        {
+            double x = coords[0];
+            double y = coords[1];
+            return (8 * x * x + 4 * x * y + 5 * y * y);
         }
         static double Xy(double[] coords)
         {
@@ -19,44 +37,38 @@ namespace Hooke_Jeeves
         delegate double Func(double[] coords);
         static double[] HookJeeves(double[] leftX, double[] rightX, double[] startCoords, double[] startStep, double[] endStep, Func func, int count)
         {
-            double step = startStep[0];
-            double[] coords = startCoords;
-            for (int i = 0; i < count; i++)
+            bool quit = false;
+            while(quit == false)
             {
-                double lastResult = func(coords);
-                step = startStep[i];
-                while (Math.Abs(step) > endStep[i])
+                double[] dot1 = startCoords;
+                double[] curStep = startStep;
+                while (IsLesser(endStep, curStep))
                 {
-                    coords[i] += step;
-                    Console.WriteLine($"coords[{i}]={coords[i]} step={step} lr={lastResult} func={func(coords)}");
-                    if (coords[i] >= rightX[i])
+                    for (int i = 0; i < count; i++)
                     {
-                        coords[i] -= step;
-                        step = -step;
-                    }
-                    else
-                    {
-                        if (coords[i] > leftX[i])
-                        {
-                            if (func(coords) > lastResult)
+                            double[] tempDot = dot1;
+                            tempDot[i] = dot1[i] + curStep[i];
+                            double plusFunc = func(tempDot);
+                            tempDot[i] = dot1[i] - curStep[i];
+                            double minusFunc = func(tempDot);
+                            if ((plusFunc < func(dot1)) && (plusFunc < minusFunc))
                             {
-                                coords[i] -= step;
-                                step = -step;
-                                if (step > 0)
-                                {
-                                    step = step / 2;
-                                }
+                                dot1[i] = dot1[i] + curStep[i];
                             }
                             else
                             {
-                                if(func(coords)!=Math.Sqrt(-1))
-                                lastResult = func(coords);
+                                if ((minusFunc < func(dot1)) && (minusFunc < plusFunc))
+                                {
+                                    dot1[i] = dot1[i] - curStep[i];
+                                }
+                                else
+                                {
+                                    if (curStep[i] >= endStep[i])
+                                    {
+                                        curStep[i] = curStep[i] / 2;
+                                    }
+                                }
                             }
-                        }
-                        else
-                        {
-                            step = endStep[i];
-                        }
                     }
                 }
             }
@@ -66,12 +78,12 @@ namespace Hooke_Jeeves
         {
             Console.WriteLine("Hello World!");
             //Func func = Sq;
-            double[] ms = new double[2] { 0, 0};
+            double[] ms = new double[2] { -4, -4};
             double[] startSteps = new double[2] { 10, 10 };
-            double[] endSteps = new double[2] { 0.001, 0.001 };
+            double[] endSteps = new double[2] { 0.1, 0.1 };
             double[] LeftX = new double[2] { -100, -100 };
             double[] RightX = new double[2] { 100, 100 };
-            double[] oout = HookJeeves(LeftX, RightX, ms, startSteps, endSteps, Xy, 2);
+            double[] oout = HookJeeves(LeftX, RightX, ms, startSteps, endSteps, Tryy, 2);
             Console.WriteLine($"x={oout[0]} y={oout[1]} f={Xy(oout)}");
         }
     }
