@@ -46,7 +46,7 @@ namespace Hooke_Jeeves
         {
             double x = coords[0];
             double y = coords[1];
-            return (8 * x * x + 4 * x * y + 5 * y * y);
+            return (x*x+y*y*y);
         }
         static double Xy(double[] coords)
         {
@@ -99,13 +99,15 @@ namespace Hooke_Jeeves
                                 }
                             }
                         }
+                        // Console.WriteLine("zAZAZ");
                     }
+                    Console.WriteLine("AzZAZ");
                     if (quit == true)
                     {
                         return dot2;
                     }
                 }
-
+                Console.WriteLine("AZAZa");
                 dot3 = dot3Founder(dot1, dot2, 2);
                 dot4 = new double[count];
                 Array.Copy(dot3, dot4, count);
@@ -133,6 +135,7 @@ namespace Hooke_Jeeves
                         return dot4;
                     }
                 }
+                Console.WriteLine("AZAZ");
                     if (AreAlmostEqual(dot3, dot4))
                     {
                         Array.Copy(dot2, dot1, count);
@@ -157,7 +160,7 @@ namespace Hooke_Jeeves
             double[] LeftX = new double[2] { -100, -100 };
             double[] RightX = new double[2] { 100, 100 };
             double[] oout = HookJeeves(LeftX, RightX, ms, startSteps, endSteps, Tryy, 2);
-            Console.WriteLine($"x={oout[0]} y={oout[1]} f={Xy(oout)}");
+            Console.WriteLine($"x={oout[0]} y={oout[1]} f={Tryy(oout)}");
         }
     }
 }
