@@ -16,6 +16,16 @@ namespace Hooke_Jeeves
 
             return true;
         }
+
+        static double[] dot3Founder(double[] coords1, double[] coords2, double lambda)
+        {
+            double[] coords = coords1;
+            for (int i = 0; i < coords1.Length; i++)
+            {
+                coords[i] = coords[i] + ((coords2[i] - coords[i]) * lambda);
+            }
+            return coords;
+        }
         static double Sq(double x)
         {
             return (Math.Cos(x));
@@ -38,10 +48,13 @@ namespace Hooke_Jeeves
         static double[] HookJeeves(double[] leftX, double[] rightX, double[] startCoords, double[] startStep, double[] endStep, Func func, int count)
         {
             bool quit = false;
-            while(quit == false)
+            double[] dot1 = startCoords;
+            double[] dot2 = startCoords;
+            double[] dot3;
+            double[] dot4;
+            double[] curStep = startStep;
+            while (quit == false)
             {
-                double[] dot1 = startCoords;
-                double[] curStep = startStep;
                 while (IsLesser(endStep, curStep))
                 {
                     for (int i = 0; i < count; i++)
@@ -53,13 +66,13 @@ namespace Hooke_Jeeves
                             double minusFunc = func(tempDot);
                             if ((plusFunc < func(dot1)) && (plusFunc < minusFunc))
                             {
-                                dot1[i] = dot1[i] + curStep[i];
+                                dot2[i] = dot2[i] + curStep[i];
                             }
                             else
                             {
                                 if ((minusFunc < func(dot1)) && (minusFunc < plusFunc))
                                 {
-                                    dot1[i] = dot1[i] - curStep[i];
+                                    dot2[i] = dot2[i] - curStep[i];
                                 }
                                 else
                                 {
@@ -69,6 +82,28 @@ namespace Hooke_Jeeves
                                     }
                                 }
                             }
+                    }
+                }
+
+                dot3 = dot3Founder(dot1, dot2, 2);
+                dot4 = dot3;
+                for (int i = 0; i < count; i++)
+                {
+                    double[] tempDot = dot3;
+                    tempDot[i] = dot3[i] + curStep[i];
+                    double plusFunc = func(tempDot);
+                    tempDot[i] = dot3[i] - curStep[i];
+                    double minusFunc = func(tempDot);
+                    if ((plusFunc < func(dot3)) && (plusFunc < minusFunc))
+                    {
+                        dot4[i] = dot4[i] + curStep[i];
+                    }
+                    else
+                    {
+                        if ((minusFunc < func(dot3)) && (minusFunc < plusFunc))
+                        {
+                            dot4[i] = dot4[i] - curStep[i];
+                        }
                     }
                 }
             }
