@@ -4,11 +4,11 @@ namespace Hooke_Jeeves
 {
     class Program
     {
-        static bool AreAlmostEqual(double[] a, double[] b)
+        static bool AreAlmostEqual(double[] a, double[] b, double[] pogr)
         {
             for (int i = 0; i < a.Length; i++)
             {
-                if (Math.Round(a[i], 4) != Math.Round(b[i], 4))
+                if (Math.Abs(a[i] - b[i]) >= pogr[i])
                 {
                     return false;
                 }
@@ -136,7 +136,7 @@ namespace Hooke_Jeeves
                     }
                 }
                 Console.WriteLine("AZAZ");
-                    if (AreAlmostEqual(dot3, dot4))
+                    if (AreAlmostEqual(dot3, dot4, endStep))
                     {
                         Array.Copy(dot2, dot1, count);
                         Array.Copy(dot4, dot2, count);
