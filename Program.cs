@@ -38,9 +38,9 @@ namespace Hooke_Jeeves
             }
             return coords;
         }
-        static double Sq(double x)
+        static double Sq(double[] x)
         {
-            return (x*x);
+            return (x[0]*x[0]);
         }
         static double Tryy(double[] coords)
         {
@@ -154,13 +154,13 @@ namespace Hooke_Jeeves
         {
             Console.WriteLine("Hello World!");
             //Func func = Sq;
-            double[] ms = new double[2] { -4, -4};
-            double[] startSteps = new double[2] { 10, 10 };
-            double[] endSteps = new double[2] { 0.1, 0.1 };
-            double[] LeftX = new double[2] { -100, -100 };
-            double[] RightX = new double[2] { 100, 100 };
-            double[] oout = HookJeeves(LeftX, RightX, ms, startSteps, endSteps, Tryy, 2);
-            Console.WriteLine($"x={oout[0]} y={oout[1]} f={Tryy(oout)}");
+            double[] ms = new double[1] { -4 };
+            double[] startSteps = new double[1] { 10 };
+            double[] endSteps = new double[1] { 0.00001 };
+            double[] LeftX = new double[1] { -100 };
+            double[] RightX = new double[1] { 100 };
+            double[] oout = HookJeeves(LeftX, RightX, ms, startSteps, endSteps, Sq, 1);
+            Console.WriteLine($"x={oout[0]} f={Sq(oout)}");
         }
     }
 }
